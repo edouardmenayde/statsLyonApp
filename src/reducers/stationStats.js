@@ -1,21 +1,21 @@
 /**
- * StationStatus
+ * StationStats
  * @flow
  */
-import {REQUEST_STATION_STATUS, RECEIVE_STATION_STATUS} from "../constants/ActionTypes";
+import {REQUEST_STATION_STATS, RECEIVE_STATION_STATS} from "../constants/ActionTypes";
 
-export function stationStatus(state = {
+export function stationStats(state = {
   isFetching: true
 }, action) {
   switch (action.type) {
-    case REQUEST_STATION_STATUS:
+    case REQUEST_STATION_STATS:
       return Object.assign({}, state, {
         isFetching: true
       });
-    case RECEIVE_STATION_STATUS:
+    case RECEIVE_STATION_STATS:
       return Object.assign({}, state, {
         isFetching : false,
-        items      : action.items,
+        item       : action.item,
         lastUpdated: action.lastUpdated
       });
     default:

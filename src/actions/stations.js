@@ -1,4 +1,9 @@
-export const REQUEST_STATIONS = 'REQUEST_STATIONS';
+/**
+ * Stations
+ * @flow
+ */
+import {handleErrors} from "./utils";
+import {REQUEST_STATIONS, RECEIVE_STATIONS, CLEAR_STATIONS} from "../constants/ActionTypes";
 
 export function requestStations() {
   return {
@@ -6,17 +11,13 @@ export function requestStations() {
   };
 }
 
-export const RECEIVE_STATIONS = 'RECEIVE_STATIONS';
-
-export function receiveStations(stations) {
+export function receiveStations(stations: []) {
   return {
     type      : RECEIVE_STATIONS,
-    stations  : stations.map(station => station),
+    items     : stations.map(station => station),
     receivedAt: Date.now()
   };
 }
-
-export const CLEAR_STATIONS = 'CLEAR_STATIONS';
 
 export function clearStations() {
   return {
@@ -24,15 +25,8 @@ export function clearStations() {
   }
 }
 
-function handleErrors(response) {
-  if(!response.ok) {
-    console.error(`Error ${response.status}`);
-  }
-  return response;
-}
-
-export function fetchStations(searchInput) {
-  return function (dispatch) {
+export function fetchStations(searchInput: string) {
+  return function (dispatch: Function) {
 
     if (!searchInput) {
       return dispatch(receiveStations([]))
@@ -49,7 +43,7 @@ export function fetchStations(searchInput) {
         dispatch(receiveStations(stations));
       })
       .catch(error => {
-        console.error(error)
+        console.error(error);
       });
   }
 }

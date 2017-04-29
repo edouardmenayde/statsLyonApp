@@ -1,3 +1,7 @@
+/**
+ * ConfigureStore
+ * @flow
+ */
 import {createStore, applyMiddleware} from "redux";
 import createLogger from "redux-logger";
 import thunk from "redux-thunk";
@@ -8,13 +12,8 @@ const loggerMiddleware = createLogger();
 
 export default () => createStore(
   rootReducer,
-  {
-    requestStations: {
-      items: []
-    }
-  },
   applyMiddleware(
-    // loggerMiddleware,
+    loggerMiddleware,
     thunk
   )
 );

@@ -1,18 +1,42 @@
-import React, {Component, PropTypes} from "react";
-import {StyleSheet, Text, View, Dimensions, Animated} from "react-native";
+/**
+ * Header
+ * @flow
+ */
+import React, {
+  PropTypes,
+  Component
+} from 'react';
+import {
+  Platform,
+  Animated,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import debounce from "lodash.debounce";
 import {SearchBar} from "./search-bar";
 import {connect} from "react-redux";
-import {bindActionCreators} from 'redux';
-import * as StationsAction from "../actions/stations";
+import {bindActionCreators} from "redux";
+import * as StationsActions from "../actions/stations";
 import {StationPreviewList} from "./stationPreviewList";
 import {Actions} from "react-native-router-flux";
-// import renderIf from "render-if";
 
-class Header extends Component {
+const styles = StyleSheet.create({
+  container: {
+    paddingTop: 0,
+    top       : 0,
+    right     : 0,
+    left      : 0,
+    position  : 'absolute',
+  }
+});
+
+export class Header extends Component {
 
   static propTypes = {
-    stations: PropTypes.array.isRequired,
+    stations: PropTypes.object.isRequired,
     actions : PropTypes.object.isRequired
   };
 
@@ -21,7 +45,7 @@ class Header extends Component {
     actions : {}
   };
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
 
     this.state = {
@@ -31,7 +55,7 @@ class Header extends Component {
     this.searchDebounced = debounce(this.search, 200);
   }
 
-  search(input) {
+  search(input: string) {
     const {actions} = this.props;
     actions.fetchStations(input);
 
@@ -40,10 +64,24 @@ class Header extends Component {
     });
   }
 
-  handleFocus() {
+  hideStationPreviewList () {
+    this.setState({
+      showStationPreviewList: false
+    });
+  }
+
+  showStationPreviewList () {
     this.setState({
       showStationPreviewList: true
     });
+  }
+
+  handleFocus() {
+    this.showStationPreviewList();
+  }
+
+  handleUnfocus() {
+    this.hideStationPreviewList();
   }
 
   clear() {
@@ -51,8 +89,9 @@ class Header extends Component {
     actions.clearStations();
   }
 
-  stationSelected(stationID) {
+  stationSelected(stationID: number) {
     this.clear();
+    this.hideStationPreviewList();
     Actions.station(stationID);
   }
 
@@ -61,7 +100,7 @@ class Header extends Component {
 
     return (
       <StationPreviewList
-        stations={stations}
+        stations={stations.items}
         actions={actions}
         handleStationSelected={(stationID) => this.stationSelected(stationID)}
       />
@@ -74,15 +113,18 @@ class Header extends Component {
         handleSearch={(input) => this.searchDebounced(input)}
         handleClear={() => this.clear()}
         handleFocus={() => this.handleFocus()}
+        handleUnfocus={() => this.handleUnfocus()}
       />
     );
   }
 
+
   render() {
     const {showStationPreviewList} = this.state;
-
     return (
-      <Animated.View style={styles.searchBarContainer}>
+      <Animated.View
+        style={styles.container}
+      >
         {
           this._renderSearchBar()
         }
@@ -92,25 +134,14 @@ class Header extends Component {
       </Animated.View>
     );
   }
-
 }
-const styles = StyleSheet.create({
-  searchBarContainer: {
-    position  : 'absolute',
-    right     : 0,
-    top       : 0,
-    paddingTop: 0,
-    left      : 0
-  }
-});
 
 const mapStateToProps = (state) => ({
-  stations: state.requestStations.items
+  stations: state.stations
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  actions : bindActionCreators(StationsAction, dispatch),
-  dispatch: dispatch
+  actions: bindActionCreators(StationsActions, dispatch)
 });
 
 export default connect(

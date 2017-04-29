@@ -1,29 +1,41 @@
-export const REQUEST_STATION_STATUS = 'REQUEST_STATION_STATUS';
+/**
+ * StationStatus
+ * @flow
+ */
+import {handleErrors} from "./utils";
 
-export function requestStationStatus(stationID) {
+import {REQUEST_STATION_STATUS, RECEIVE_STATION_STATUS} from "../constants/ActionTypes";
+
+export function requestStationStatus(stationID: number) {
   return {
     type     : REQUEST_STATION_STATUS,
     stationID: stationID
   };
 }
 
-export const RECEIVE_STATION_STATUS = 'RECEIVE_STATION_STATUS';
-
-export function receiveStationStatus(stationStatus) {
+export function receiveStationStatus(stationStatus: Object) {
   return {
-    type      : REQUEST_STATION_STATUS,
-    station   : stationStatus,
+    type      : RECEIVE_STATION_STATUS,
+    items     : stationStatus,
     receivedAt: Date.now()
   }
 }
 
-export function fetchStationStatus(stationID, from, to) {
-  return function (dispatch) {
+export function fetchStationStatus(stationID: number, from: Date, to: Date) {
+  return function (dispatch: Function) {
     dispatch(requestStationStatus(stationID));
 
     return fetch(`http://localhost:1337/status/${stationID}`, {
       from: from,
       to  : to
     })
+      .then(handleErrors)
+      .then(response => response.json())
+      .then((stationStatus) => {
+        dispatch(receiveStationStatus(stationStatus));
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
 }

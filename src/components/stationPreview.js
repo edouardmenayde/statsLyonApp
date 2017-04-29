@@ -1,3 +1,7 @@
+/**
+ * StationPreview
+ * @flow
+ */
 import React, {Component, PropTypes} from 'react';
 import {
   StyleSheet,
@@ -9,44 +13,6 @@ import {
   InteractionManager
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-
-export class StationPreview extends Component {
-
-  static propTypes = {
-    station: PropTypes.object.isRequired,
-    actions: PropTypes.object
-  };
-
-  static defaultProps = {
-    station: {},
-    actions: {}
-  };
-
-  constructor(props) {
-    super(props);
-
-    this.onPress = this.onPress.bind(this);
-  }
-
-  onPress() {
-    const {station, handleStationSelected} = this.props;
-    handleStationSelected(station._source.stationID);
-  }
-
-  render() {
-    const {station, actions} = this.props;
-    return (
-      <TouchableOpacity onPress={this.onPress}>
-        <View style={styles.container}>
-          <Icon name="directions-bike" style={styles.icon}/>
-          <Text style={styles.name}>
-            {station._source.name}
-          </Text>
-        </View>
-      </TouchableOpacity>
-    );
-  }
-}
 
 const styles = {
   container: {
@@ -66,3 +32,42 @@ const styles = {
     fontSize: 18
   }
 };
+
+
+export class StationPreview extends Component {
+
+  static propTypes = {
+    station: PropTypes.object.isRequired,
+    actions: PropTypes.object
+  };
+
+  static defaultProps = {
+    station: {},
+    actions: {}
+  };
+
+  constructor(props: any) {
+    super(props);
+
+    this.onPress = this.onPress.bind(this);
+  }
+
+  onPress(): void {
+    const {station, handleStationSelected} = this.props;
+    handleStationSelected(station._source.stationID);
+  }
+
+  render(): * {
+    const {station, actions} = this.props;
+    return (
+      <TouchableOpacity onPress={this.onPress}>
+        <View style={styles.container}>
+          <Icon name="directions-bike" style={styles.icon}/>
+          <Text style={styles.name}>
+            {station._source.name}
+          </Text>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+}

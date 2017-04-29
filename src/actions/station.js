@@ -1,4 +1,10 @@
-export const REQUEST_STATION = 'REQUEST_STATION';
+/**
+ * Station
+ * @flow
+ */
+import {handleErrors} from "./utils";
+
+import {REQUEST_STATION, RECEIVE_STATION} from "../constants/ActionTypes";
 
 export function requestStation() {
   return {
@@ -6,24 +12,23 @@ export function requestStation() {
   };
 }
 
-export const RECEIVE_STATION = 'RECEIVE_STATION';
-
-export function receiveStation(station) {
+export function receiveStation(station: Object) {
   return {
     type      : RECEIVE_STATION,
-    station   : station,
+    item      : station,
     receivedAt: Date.now()
   };
 }
 
-export function fetchStation(stationID) {
-  return function (dispatch) {
+export function fetchStation(stationID: number) {
+  return function (dispatch: Function) {
 
     dispatch(requestStation(stationID));
 
     return fetch(`http://localhost:1337/station/${stationID}`, {
       method: 'GET'
     })
+      .then(handleErrors)
       .then(response => response.json())
       .then(station => {
         dispatch(receiveStation(station));

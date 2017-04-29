@@ -1,3 +1,7 @@
+/**
+ * StationPreviewList
+ * @flow
+ */
 import React, {Component, PropTypes} from 'react';
 import {
   StyleSheet,
@@ -8,6 +12,14 @@ import {
   InteractionManager
 } from "react-native";
 import {StationPreview} from "./stationPreview";
+
+const styles = {
+  container: {
+    width          : Dimensions.get('window').width,
+    height         : Dimensions.get('window').height - 60,
+    backgroundColor: 'hsl(0, 0%, 92%)'
+  }
+};
 
 export class StationPreviewList extends Component {
 
@@ -25,22 +37,21 @@ export class StationPreviewList extends Component {
     showPlaceholder: true
   };
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
   }
 
-  handleStationSelected(stationID) {
+  handleStationSelected(stationID: number) {
     const {handleStationSelected} = this.props;
-
     handleStationSelected(stationID);
   }
 
   _renderPlaceholder() {
-    return  <View style={styles.container} />
+    return <View style={styles.container}/>
   }
 
   render() {
-    const {stations} = this.props;
+    const {stations}        = this.props;
     const {showPlaceholder} = this.state;
 
     if (showPlaceholder) {
@@ -49,7 +60,9 @@ export class StationPreviewList extends Component {
 
     return (
       <ScrollView
-        style={styles.container}>
+        style={styles.container}
+        keyboardShouldPersistTaps
+      >
         {stations.map((station, index) =>
           <StationPreview
             station={station}
@@ -65,18 +78,7 @@ export class StationPreviewList extends Component {
     InteractionManager.runAfterInteractions(() => {
       this.setState({
         showPlaceholder: false
-      })
+      });
     });
   }
 }
-
-const styles = {
-  container: {
-    marginTop      : 60,
-    flex           : 1,
-    width          : Dimensions.get('window').width,
-    // height         : Dimensions.get('window').height - 60,
-    height         : 100,
-    backgroundColor: 'hsl(0, 0%, 92%)'
-  }
-};

@@ -1,9 +1,24 @@
+/**
+ * HomeScreen
+ * @flow
+ */
 import React, {Component} from "react";
 import {StyleSheet, Text, View, ScrollView, Dimensions} from "react-native";
 
-// import {Actions} from "react-native-router-flux";
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  column   : {
+    marginTop      : 70,
+    borderColor    : 'red',
+    borderWidth    : 1,
+    backgroundColor: '#D3D3D3',
+    width          : Dimensions.get("window").width
+  }
+});
 
-export class HomeScreen extends Component {
+export default class HomeScreen extends Component {
 
   _renderScrollViewContent() {
     const data = Array.from({length: 40});
@@ -31,17 +46,3 @@ export class HomeScreen extends Component {
   }
 
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  column   : {
-    marginTop      : 60,
-    borderColor    : 'red',
-    borderWidth    : 1,
-    backgroundColor: '#D3D3D3',
-    // height         : Dimensions.get("window").height,
-    width          : Dimensions.get("window").width
-  }
-});

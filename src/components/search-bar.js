@@ -1,21 +1,65 @@
+/**
+ * SearchBar
+ * @flow
+ */
 import React, {Component, PropTypes} from 'react';
-import {View, Text, TextInput, StyleSheet, Animated, Platform, Dimensions, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  Animated,
+  Platform,
+  Dimensions,
+  TouchableOpacity,
+  Keyboard,
+  BackAndroid
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+const styles = StyleSheet.create({
+  container: {
+    shadowRadius   : 5,
+    shadowOpacity  : 0.7,
+    elevation      : 2,
+    backgroundColor: 'hsl(0, 0%, 92%)'
+  },
+  nav      : {
+    ...Platform.select({
+      android: {
+        borderBottomColor: 'lightgray',
+        borderBottomWidth: StyleSheet.hairlineWidth
+      }
+    }),
+    flexDirection : 'row',
+    justifyContent: 'space-around',
+    alignItems    : 'center'
+  },
+  input    : {
+    fontSize: 20,
+    flex    : 1
+  },
+  icon     : {
+    padding: 10
+  }
+});
 
 export class SearchBar extends Component {
 
   static propTypes = {
-    placeholder : PropTypes.string,
-    handleSearch: PropTypes.func.isRequired,
-    handleFocus : PropTypes.func.isRequired
+    placeholder  : PropTypes.string,
+    handleSearch : PropTypes.func.isRequired,
+    handleFocus  : PropTypes.func.isRequired,
+    handleUnfocus: PropTypes.func.isRequired
   };
 
   static defaultProps = {
     placeholder: 'Search anything...'
   };
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
+
     this.state = {
       input    : null,
       hideBack : true,
@@ -27,6 +71,27 @@ export class SearchBar extends Component {
     this._clearInput   = this._clearInput.bind(this);
     this._onChangeText = this._onChangeText.bind(this);
     this._onFocus      = this._onFocus.bind(this);
+  }
+
+  componentWillMount() {
+    this.hardwareBackPress       = BackAndroid.addEventListener('hardwareBackPress', this._hardwareBackPress.bind(this));
+    this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', this._keyboardDidShow.bind(this));
+  }
+
+  componentWillUnmount() {
+    this.hardwareBackPress.remove();
+    this.keyboardDidShowListener.remove();
+  }
+
+  _hardwareBackPress() {
+    // @TODO: fix it
+    const {handleUnfocus} = this.props;
+    handleUnfocus();
+  }
+
+  _keyboardDidShow() {
+    const {handleFocus} = this.props;
+    handleFocus();
   }
 
   onBack() {
@@ -105,73 +170,37 @@ export class SearchBar extends Component {
 
     return (
       <Animated.View style={styles.container}>
-        <View style={styles.navWrapper}>
-          <View style={styles.nav}>
-            {
-              !hideBack &&
-              <TouchableOpacity onPress={this.onBack}>
-                <Icon name="arrow-back" size={28} style={styles.icon}/>
-              </TouchableOpacity>
-            }
-            {
-              hideBack &&
-              <TouchableOpacity>
-                <Icon name="search" size={28} style={styles.icon}/>
-              </TouchableOpacity>
-            }
-            <TextInput
-              style={styles.input}
-              placeholder={placeholder}
-              value={input}
-              underlineColorAndroid='transparent'
-              returnKeyType='search'
-              onChangeText={(input) => this._onChangeText(input)}
-              onFocus={() => this._onFocus()}
-            />
-            {
-              showClear &&
-              <TouchableOpacity onPress={this.onClear}>
-                <Icon name="close" size={24} style={styles.icon}/>
-              </TouchableOpacity>
-            }
-          </View>
+        <View style={styles.nav}>
+          {
+            !hideBack &&
+            <TouchableOpacity onPress={this.onBack}>
+              <Icon name="arrow-back" size={28} style={styles.icon}/>
+            </TouchableOpacity>
+          }
+          {
+            hideBack &&
+            <TouchableOpacity>
+              <Icon name="search" size={28} style={styles.icon}/>
+            </TouchableOpacity>
+          }
+          <TextInput
+            style={styles.input}
+            placeholder={placeholder}
+            value={input}
+            underlineColorAndroid='transparent'
+            returnKeyType='search'
+            onChangeText={(input) => this._onChangeText(input)}
+            onFocus={() => this._onFocus()}
+            onSubmitEditing={Keyboard.dismiss}
+          />
+          {
+            showClear &&
+            <TouchableOpacity onPress={this.onClear}>
+              <Icon name="close" size={24} style={styles.icon}/>
+            </TouchableOpacity>
+          }
         </View>
       </Animated.View>
     );
   }
 }
-
-const styles = StyleSheet.create({
-  container : {
-    flex           : 1,
-    zIndex         : 10,
-    position       : 'absolute',
-    shadowRadius   : 5,
-    shadowOpacity  : 0.7,
-    elevation      : 2,
-    backgroundColor: 'hsl(0, 0%, 92%)'
-  },
-  navWrapper: {
-    width: Dimensions.get('window').width
-  },
-  nav       : {
-    ...Platform.select({
-      android: {
-        borderBottomColor: 'lightgray',
-        borderBottomWidth: StyleSheet.hairlineWidth
-      }
-    }),
-    flex          : 1,
-    flexDirection : 'row',
-    justifyContent: 'space-around',
-    alignItems    : 'center',
-    height        : 60
-  },
-  input     : {
-    fontSize: 20,
-    flex    : 1
-  },
-  icon      : {
-    padding: 10
-  }
-});

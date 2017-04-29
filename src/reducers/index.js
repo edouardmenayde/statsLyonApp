@@ -1,8 +1,19 @@
+/**
+ * Index
+ * @flow
+ */
 import {combineReducers} from "redux";
-import {requestStations} from './stations';
+
+import {stations} from "./stations";
+import {station} from "./station";
+import {stationStatus} from "./stationStatus";
+import {stationStats} from "./stationStats";
 
 const StatsLyonApp = combineReducers({
-  requestStations
+  station,
+  stations,
+  stationStatus,
+  stationStats
 });
 
 export default StatsLyonApp;

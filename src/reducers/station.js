@@ -1,6 +1,12 @@
-import {REQUEST_STATION, RECEIVE_STATION} from "../actions/station";
+/**
+ * Station
+ * @flow
+ */
+import {REQUEST_STATION, RECEIVE_STATION} from "../constants/ActionTypes";
 
-function station(state = {}, action) {
+export function station(state = {
+  isFetching: true
+}, action) {
   switch (action.type) {
     case REQUEST_STATION:
       return Object.assign({}, state, {
@@ -9,23 +15,9 @@ function station(state = {}, action) {
     case RECEIVE_STATION:
       return Object.assign({}, state, {
         isFetching : false,
-        item       : action.station,
+        item       : action.item,
         lastUpdated: action.receivedAt
       });
-    default:
-      return state;
-  }
-}
-
-export function requestStation(state = {}, action) {
-  switch (action.type) {
-    case RECEIVE_STATION:
-    case REQUEST_STATION:
-      return Object.assign(
-        {},
-        state,
-        station(state, action)
-      );
     default:
       return state;
   }
